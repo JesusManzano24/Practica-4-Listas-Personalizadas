@@ -13,7 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private ImageView imageView;
-    private TextView descripcionesTextView; // Agrega esta línea
+    private TextView descripcionesTextView;
+    private TextView totalTextView; // Agrega esta línea
+    private double total = 0.0; // Inicializa el total
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +24,8 @@ public class MainActivity extends AppCompatActivity {
 
         listView = findViewById(R.id.List);
         imageView = findViewById(R.id.image);
-        descripcionesTextView = findViewById(R.id.Descripcion); // Asigna el TextView desde tu diseño XML
+        descripcionesTextView = findViewById(R.id.Descripcion);
+        totalTextView = findViewById(R.id.total); // Asigna el TextView desde tu diseño XML
 
         String[] nombres = {"Natsumi", "Origami", "Yoshino", "Tohka", "Kurumi"};
         String[] precios = {"$4,019.00", "$10,190.00", "$1,582.53", "2,983.03", "2,500.00"};
@@ -101,7 +104,14 @@ public class MainActivity extends AppCompatActivity {
                 imageView.setImageResource(imagenResId);
                 descripcionesTextView.setText(descripciones2[position]); // Muestra la descripción
 
-                // Muestra un mensaje de confirmación
+                String precioString = precios[position];
+                double precio = Double.parseDouble(precioString.replace("$", "").replace(",", ""));
+
+                total += precio;
+
+                String totalFormatted = String.format("Total: $%,.2f", total);
+                totalTextView.setText(totalFormatted);
+
                 Toast.makeText(getApplicationContext(), "Seleccionaste el elemento: " + nombres[position], Toast.LENGTH_LONG).show();
             }
         });
@@ -109,9 +119,19 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                String precioString = precios[position];
+                double precio = Double.parseDouble(precioString.replace("$", "").replace(",", ""));
+
+                total -= precio;
+
+                String totalFormatted = String.format("Total: $%,.2f", total);
+                totalTextView.setText(totalFormatted);
+
                 Toast.makeText(getApplicationContext(), "Seleccionaste: " + nombres[position] + " con precio de $" + precios[position], Toast.LENGTH_LONG).show();
                 return true;
             }
         });
+
     }
 }
